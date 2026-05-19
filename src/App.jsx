@@ -3,10 +3,12 @@
  * y para la interfaz comun : nabar, sidebar, footer
  */
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
 //Componentes del layout
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Sidebar from './components/Sidebar'
+
 //Paginas principales con la que cuenta el proyecto
 import Home from './pages/Home'
 import Create from './pages/Create'
@@ -16,7 +18,7 @@ import NotFound from './pages/NotFound'
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter>{/*permite navegacion SPA sin recargar la pagina*/}
       {/* Barra de navegación superior */}
       <Navbar />
       <div style={{ display: "flex" }}>

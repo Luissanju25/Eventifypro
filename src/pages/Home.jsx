@@ -1,7 +1,7 @@
 //Representacion de la pagina principal
 //Mostraremos la lista de eventos y podremos aplica el filtro por año 
 
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { EventsContext } from '../context/EventsContext'
 import EventList from '../components/EventList'
 
@@ -17,13 +17,18 @@ function Home() {
     years.push(i)
   }
 
+
   return (
     <div style={{ maxWidth: "800px", margin: "20px auto" }}>
       <h1>Lista de eventos</h1>
-
+      
       {/* FILTRO POR AÑO */}
       <select
         value={yearFilter}
+         /**
+         * onChange detecta el cambio del select
+         * y actualiza el filtro global.
+         */
         onChange={(e) => setYearFilter(e.target.value)}
         style={{ marginBottom: "15px", padding: "5px" }}
       >
@@ -38,7 +43,17 @@ function Home() {
       </select>
 
       {/* LISTA DE EVENTOS */}
-      <EventList events={events} />
+      {events.length === 0 ? (
+        <p style={{ textAlign: "center", marginTop: "20px" }}>
+          No hay eventos disponibles
+        </p>
+      ) : (
+        /**
+         * EventList renderiza todas las tarjetas
+         * recibiendo los eventos mediante props.
+         */
+        <EventList events={events} />
+      )}
     </div>
   )
 }

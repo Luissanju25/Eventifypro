@@ -7,9 +7,13 @@ function EventList({ events }) {
   return (
     <div>
 
-      {/* Recorremos los eventos */}
+      {/* Recorremos el arrray de eventos y renderiza una tarjeta individual */}
       {events.map(event => (
-        <EventItem key={event.id} event={event} />
+        <EventItem 
+        //key ayuda a React a identificar elementos únicos.
+        key={event.id} 
+        // Evento enviado mediante props
+        event={event} />
       ))}
     </div>
   )

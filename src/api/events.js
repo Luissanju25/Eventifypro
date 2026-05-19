@@ -1,12 +1,27 @@
-// Este archivo simula una API local de eventos.
-// Inicialmente se utilizaba para cargar datos de prueba,
-// pero ha sido sustituido por localStorage para persistencia real.
-
-// Actualmente se ha adaptado para trabajar con localStorage,
-// permitiendo persistencia de datos en el navegador.
-
-//  Aunque la aplicación ahora usa Context API directamente,
-// este archivo demuestra la evolución del proyecto hacia un modelo tipo backend.
+/**
+ * Simulación de API local.
+ * 
+ * Este archivo fue utilizado en una fase inicial
+ * del proyecto para simular un pequeño backend.
+ * 
+ * Permitía:
+ * - Obtener eventos
+ * - Buscar eventos por id
+ * - Guardar eventos
+ * 
+ * usando:
+ * - Promises
+ * - async/await
+ * - localStorage
+ * 
+ * Actualmente la aplicación utiliza Context API
+ * como arquitectura principal, por lo que este
+ * archivo ya no participa directamente en el flujo
+ * principal de la aplicación.
+ * 
+ * Se mantiene como ejemplo de evolución del proyecto
+ * hacia una estructura similar a una API real.
+ */
 
 //Datos iniciales de ejemplo
 const events = [
@@ -67,7 +82,15 @@ export const getEventById = async (id) => {
   })
 }
 
-// Simula guardar un evento
+/**
+ *  Simula guardar un evento
+ * en un backend.
+ * 
+ * Funcionamiento:
+ * 1. Recupera eventos actuales.
+ * 2. Añade el nuevo evento.
+ * 3. Guarda el nuevo array en localStorage.
+ */
 export const saveEvent = async (newEvent) => {
   return new Promise((resolve) => {
     setTimeout(() => {

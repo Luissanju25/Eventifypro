@@ -5,8 +5,14 @@ import { useContext } from 'react'
 import { EventsContext } from '../context/EventsContext'
 
 function Sidebar() {
+
+  // Estado global de filtros
   const { setFilter, filter } = useContext(EventsContext)
 
+  /**
+   * Actualiza la categoría activa
+   * al hacer click.
+   */
   const handleClick = (category) => {
     setFilter(category)
   }

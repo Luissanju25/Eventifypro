@@ -5,6 +5,34 @@ import { Link } from 'react-router-dom'
 import logo from '../assets/logo.png'
 
 function Navbar() {
+
+    const exportJSON = () => {
+
+    // Obtener eventos actuales
+    const events = localStorage.getItem("events")
+
+    // Crear archivo tipo JSON
+    const blob = new Blob(
+      [events],
+      { type: "application/json" }
+    )
+
+    // Crear URL temporal
+    const url = URL.createObjectURL(blob)
+
+    // Crear enlace invisible
+    const a = document.createElement("a")
+
+    a.href = url
+    a.download = "events.json"
+
+    // Lanzar descarga
+    a.click()
+
+    // Liberar memoria
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <nav style={{
       display: "flex",
@@ -55,11 +83,35 @@ function Navbar() {
         backgroundColor: "#38a169",
         transition: "0.2s"
       }}
+      
       onMouseEnter={(e) => e.target.style.backgroundColor = "#2f855a"}
       onMouseLeave={(e) => e.target.style.backgroundColor = "#38a169"}
       >
         Crear Evento
       </Link>
+
+      {/* Exportar JSON */}
+        <button
+
+          onClick={exportJSON}
+
+          style={{
+            padding: "6px 12px",
+            borderRadius: "6px",
+            border: "none",
+            backgroundColor: "#718096",
+            color: "white",
+            cursor: "pointer",
+            transition: "0.2s"
+          }}
+
+          onMouseEnter={(e) => e.target.style.backgroundColor = "#4a5568" }
+          onMouseLeave={(e) => e.target.style.backgroundColor = "#718096" }
+        >
+
+          Exportar JSON
+
+        </button>
 
     </div>
     </nav>

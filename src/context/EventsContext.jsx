@@ -1,28 +1,57 @@
-/**Gestiona el estado global de la aplicacion 
- * Donde se alamacenan los eventos, se aplican los filtros y se implementa 
- * la persistencia de datos utilizando LocalStorage
- */
+// Contexto global para gestionar los eventos de la aplicación.
+// Centraliza el estado y evita pasar props entre componentes.
 
 import { createContext, useState, useEffect } from 'react'
+import { useLocalStorage } from '../hooks/useLocalStorage'
 
-// Crear contexto global
+// Crear contexto
 export const EventsContext = createContext()
 
 export const EventsProvider = ({ children }) => {
 
-  // Estado principal de eventos cargandolo desde LocalStorage
-const [events, setEvents] = useState(() => {
-  const stored = localStorage.getItem("events")
-  return stored ? JSON.parse(stored) : []
-})
-  // Estados para los diferentes filtros
+  /**
+   * Estado principal de eventos.
+   * 
+   * useLocalStorage mantiene
+   * persistencia automática.
+   */
+  const [events, setEvents] = useLocalStorage("events", [])
+
+  // Filtros
   const [filter, setFilter] = useState("Todos")
   const [yearFilter, setYearFilter] = useState("Todos")
 
-  //Encargado de guardar los eventos en localStorage
-useEffect(() => {
-  localStorage.setItem("events", JSON.stringify(events))
-}, [events])
+  // CARGA INICIAL DESDE events.JSON usando fetch + async/await
+  useEffect(() => {
+
+    const loadEvents = async () => {
+
+      // Solo cargar si localStorage está vacío
+      if (events.length === 0) {
+
+        try {
+          const res = await fetch('/events.json')
+          if (!res.ok) {
+            throw new Error("Error cargando eventos")
+          }
+          //convertir respuesta en JSON
+          const data = await res.json()
+          //guardamos eventos en estado
+          setEvents(data)
+
+        } catch (error) {
+          console.error(
+            "Error obteniendo eventos iniciales:",
+            error
+          )
+        }
+      }
+    }
+
+    loadEvents()
+
+  }, [])
+
 
   // Crear evento
   const addEvent = (newEvent) => {
@@ -34,30 +63,34 @@ useEffect(() => {
     setEvents(prev => prev.filter(e => e.id !== id))
   }
 
-  // Actualizar evento (EDITAR)
+  // Actualizar evento
   const updateEvent = (updatedEvent) => {
     setEvents(prev =>
       prev.map(e => e.id === updatedEvent.id ? updatedEvent : e)
     )
   }
 
-  // Filtrado combinado (categoría + año)
+  // Filtrado por categoría + año
   const filteredEvents = events.filter(e => {
     const matchCategory = filter === "Todos" || e.category === filter
 
+    //Obtiene año del evento
     const eventYear = new Date(e.date).getFullYear().toString()
     const matchYear = yearFilter === "Todos" || eventYear === yearFilter
 
     return matchCategory && matchYear
   })
 
-  // Datos y funciones que compartimos globalmente
+  /**
+   * Compartimos estado y funciones
+   * con toda la aplicación.
+   */
   return (
     <EventsContext.Provider value={{
       events: filteredEvents,
       addEvent,
       deleteEvent,
-      updateEvent, 
+      updateEvent,
       setFilter,
       filter,
       setYearFilter,

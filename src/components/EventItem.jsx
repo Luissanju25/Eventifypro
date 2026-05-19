@@ -7,6 +7,8 @@ import { EventsContext } from '../context/EventsContext'
 
 function EventItem({ event }) {
   const { deleteEvent } = useContext(EventsContext)
+
+  //permite navegar mediante codigo para ver detalles
   const navigate = useNavigate()
 
   return (

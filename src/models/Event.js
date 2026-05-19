@@ -17,7 +17,11 @@ class Event {
   }
 
   isFree() {
-    return this.price == 0
+    return Number(this.price) === 0
+  }
+
+  getYear() {
+    return this.date ? new Date(this.date).getFullYear() : null
   }
 }
 

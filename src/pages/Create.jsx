@@ -4,7 +4,6 @@
 import { useState, useContext, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { EventsContext } from '../context/EventsContext'
-import { saveEvent } from '../api/events'
 import Event from '../models/Event'
 
 function Create() {
@@ -15,7 +14,7 @@ function Create() {
   const { events, addEvent, updateEvent } = useContext(EventsContext)
 
   // Estado del formulario
-  const [form, setForm] = useState({
+  const [form, setForm] = useState({//contiene los datos actuales y permite actualizar
     title: '',
     description: '',
     date: '',
@@ -29,53 +28,111 @@ function Create() {
   useEffect(() => {
     if (id) {
       const eventToEdit = events.find(e => e.id === Number(id))
+
       if (eventToEdit) {
         setForm(eventToEdit)
       }
     }
   }, [id, events])
 
+   /**
+   * onChange detecta cambios
+   * y actualiza el estado del formulario.
+   */
+
   // Manejo de cambios en inputs
   const handleChange = (e) => {
-    setForm({
+     setForm({
       ...form,
       [e.target.name]: e.target.value
     })
   }
 
-  // Envío del formulario (crear o editar)
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  // Envío del formulario
+  const handleSubmit = (e) => {
+  e.preventDefault()//Evita la recarga de la pagina
 
-    // Validación básica
-    if (!form.title || !form.date || !form.location) {
-      alert("Todos los campos obligatorios deben rellenarse")
-      return
-    }
-
-    try {
-      if (id) {
-        // EDITAR evento
-        updateEvent(form)
-        alert("Evento actualizado correctamente")
-      } else {
-        // CREAR evento
-        const newEvent = new Event({
-          ...form,
-          id: Date.now()
-        })
-
-        await saveEvent(newEvent)
-        addEvent(newEvent)
-        alert("Evento creado correctamente")
-      }
-    } catch (error) {
-      console.error(error)
-    }
+  // Validación título
+  if (!form.title.trim()) {
+    alert("El título es obligatorio")
+    return
   }
+
+  // Validación ubicación
+  if (!form.location.trim()) {
+    alert("La ubicación es obligatoria")
+    return
+  }
+
+  // Validación fecha
+  if (!form.date) {
+    alert("La fecha es obligatoria")
+    return
+  }
+
+  // Validación categoría
+  if (!form.category) {
+    alert("Debes seleccionar una categoría")
+    return
+  }
+
+  // Validación precio
+  if (form.price < 0) {
+    alert("El precio no puede ser negativo")
+    return
+  }
+
+  // Validación descripción
+  if (form.description.length < 10) {
+    alert("La descripción debe tener al menos 10 caracteres")
+    return
+  }
+
+  // Validación imagen
+  if (form.image && !form.image.startsWith("http")) {
+    alert("La imagen debe ser una URL válida")
+    return
+  }
+
+  try {
+    if (id) {
+      // Editar evento
+      updateEvent(form)
+      alert("Evento actualizado correctamente")
+    } else {
+
+      // Crear nuevo evento
+      const newEvent = new Event({
+        ...form,
+        id: Date.now()
+      })
+
+      addEvent(newEvent)
+
+      // Limpiar formulario
+      setForm({
+        title: '',
+        description: '',
+        date: '',
+        location: '',
+        category: '',
+        price: '',
+        image: ''
+      })
+
+      alert("Evento creado correctamente")
+    }
+
+  } catch (error) {
+    console.error("Error al guardar evento:", error)
+
+    alert("Ha ocurrido un error")
+  }
+}
 
   return (
     <div style={{ maxWidth: "500px", margin: "20px auto" }}>
+      {/* Título dinámico */}
       <h1>{id ? "Editar evento" : "Crear evento"}</h1>
 
       <form
@@ -103,7 +160,7 @@ function Create() {
           onChange={handleChange}
         />
 
-        <select name="category" onChange={handleChange}>
+        <select name="category" value={form.category} onChange={handleChange}>
           <option value="">Selecciona categoría</option>
 
           <option value="Orquesta">Orquesta</option>
@@ -137,6 +194,7 @@ function Create() {
         <input
           name="image"
           placeholder="URL de la imagen"
+          value={form.image}
           onChange={handleChange}
         />
 
